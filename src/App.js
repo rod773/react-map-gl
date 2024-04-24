@@ -1,22 +1,25 @@
 import { useState, useEffect } from "react";
-import MapGL, { GeolocationateControl, NavigationControl } from "react-map-gl";
-import { Geolocation } from "@capacitor/Geolocationation";
+import Map, { Marker } from "react-map-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import { Geolocation } from "@capacitor/geolocation";
 
-const TOKEN =
+const MAPBOX_TOKEN =
   "pk.eyJ1Ijoic2FoaWx0aGFrYXJlNTIxIiwiYSI6ImNrbjVvMTkzNDA2MXQydnM2OHJ6aHJvbXEifQ.z5aEqRBTtDMWoxVzf3aGsg";
 
 function App() {
-  const [viewport, setViewport] = useState({
-    latitude: 0,
-    longitude: 0,
-  });
+  const [viewport, setViewport] = useState({});
 
   const currentPosition = async () => {
     await Geolocation.getCurrentPosition().then((response) => {
       console.log(response);
       const latitude = response.coords.latitude;
       const longitude = response.coords.longitude;
-      setViewport({ latitude: latitude, longitude: longitude });
+      setViewport({
+        ...viewport,
+        latitude: latitude,
+        longitude: longitude,
+        zoom: 3.5,
+      });
     });
   };
 
@@ -33,28 +36,21 @@ function App() {
 
   return (
     <div>
-      <MapGL
-        {...viewport}
-        //onClick={this.handleMapClick}
-        mapStyle="mapbox://styles/mapbox/streets-v9"
-        mapboxApiAccessToken={TOKEN}
-        perspectiveEnabled
-        onViewportChange={(viewport) => this.setState({ viewport })}
-      >
+      {viewport.latitude && viewport.longitude && (
         <div>
-          {" "}
-          <GeolocationateControl
-            positionOptions={{ enableHighAccuracy: true }}
-            trackUserLocation={true}
-          />
+          <h1>Your Location:</h1>
+          <Map
+            mapboxAccessToken={MAPBOX_TOKEN}
+            initialViewState={viewport}
+            mapStyle="mapbox://styles/mapbox/streets-v11"
+          >
+            <Marker
+              longitude={viewport.longitude}
+              latitude={viewport.latitude}
+            />
+          </Map>
         </div>
-
-        <div>
-          <NavigationControl
-            onViewportChange={(viewport) => this.setState({ viewport })}
-          />
-        </div>
-      </MapGL>
+      )}
     </div>
   );
 }
