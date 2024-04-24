@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import ReactMapGl, { GeolocateControl, NavigationControl } from "react-map-gl";
+import ReactMapGl, {
+  GeolocateControl,
+  NavigationControl,
+  Source,
+  Layer,
+} from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Geolocation as geoloc } from "@capacitor/geolocation";
 
@@ -26,6 +31,18 @@ const App = () => {
     currentPosition();
   }, []);
 
+  const dataOne = {
+    type: "Feature",
+    properties: {},
+    geometry: {
+      type: "LineString",
+      coordinates: [
+        [viewport.latitude, viewport.longitude],
+        [viewport.latitude - 1, viewport.longitude - 1],
+      ],
+    },
+  };
+
   return (
     <>
       <div className="h-screen w-100">
@@ -47,6 +64,21 @@ const App = () => {
             mapStyle={"mapbox://styles/mapbox/streets-v9"}
             minZoom={5}
           >
+            <Source id="polylineLayer" type="geojson" data={dataOne}>
+              <Layer
+                id="lineLayer"
+                type="line"
+                source="my-data"
+                layout={{
+                  "line-join": "round",
+                  "line-cap": "round",
+                }}
+                paint={{
+                  "line-color": "rgba(3, 170, 238, 0.5)",
+                  "line-width": 5,
+                }}
+              />
+            </Source>
             <NavigationControl />
             <GeolocateControl />
           </ReactMapGl>
