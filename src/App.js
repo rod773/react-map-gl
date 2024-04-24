@@ -18,7 +18,7 @@ function App() {
         ...viewport,
         latitude: latitude,
         longitude: longitude,
-        zoom: 3.5,
+        zoom: 15,
       });
     });
   };
@@ -37,7 +37,7 @@ function App() {
   return (
     <div>
       {viewport.latitude && viewport.longitude && (
-        <div>
+        <div className="w-100 h-screen">
           <h1>Your Location:</h1>
           <Map
             mapboxAccessToken={MAPBOX_TOKEN}
